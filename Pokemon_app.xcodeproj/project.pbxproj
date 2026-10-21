@@ -10,11 +10,6 @@
 		037874FB30874A4B001C6748 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 037874FA30874A4B001C6748 /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXFileReference section */
-		037874FA00000002001C6748 /* Pokemon_appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Pokemon_appTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		037874EB3087453A001C6748 /* Pokemon_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pokemon_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
-
 /* Begin PBXContainerItemProxy section */
 		037874FA0000000A001C6748 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -25,37 +20,34 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXTargetDependency section */
-		037874FA0000000B001C6748 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 037874EA3087453A001C6748 /* Pokemon_app */;
-			targetProxy = 037874FA0000000A001C6748 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
+/* Begin PBXFileReference section */
+		037874EB3087453A001C6748 /* Pokemon_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pokemon_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		037874FA00000002001C6748 /* Pokemon_appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Pokemon_appTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		037874FA00000003001C6748 /* Pokemon_appTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Pokemon_appTests;
-			sourceTree = "<group>";
-		};
 		037874ED3087453A001C6748 /* Pokemon_app */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Pokemon_app;
 			sourceTree = "<group>";
 		};
+		037874FA00000003001C6748 /* Pokemon_appTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Pokemon_appTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		037874FA00000005001C6748 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			files = (
-			);
-		};
 		037874E83087453A001C6748 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
 				037874FB30874A4B001C6748 /* ComposableArchitecture in Frameworks */,
+			);
+		};
+		037874FA00000005001C6748 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -120,8 +112,6 @@
 				037874FA00000003001C6748 /* Pokemon_appTests */,
 			);
 			name = Pokemon_appTests;
-			packageProductDependencies = (
-			);
 			productName = Pokemon_appTests;
 			productReference = 037874FA00000002001C6748 /* Pokemon_appTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -172,12 +162,12 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		037874FA00000006001C6748 /* Resources */ = {
+		037874E93087453A001C6748 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
 		};
-		037874E93087453A001C6748 /* Resources */ = {
+		037874FA00000006001C6748 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -185,17 +175,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		037874FA00000004001C6748 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			files = (
-			);
-		};
 		037874E73087453A001C6748 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
 			);
 		};
+		037874FA00000004001C6748 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		037874FA0000000B001C6748 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 037874EA3087453A001C6748 /* Pokemon_app */;
+			targetProxy = 037874FA0000000A001C6748 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		037874F43087453B001C6748 /* Debug configuration for PBXProject "Pokemon_app" */ = {

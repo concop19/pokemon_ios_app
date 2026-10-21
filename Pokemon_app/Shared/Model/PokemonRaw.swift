@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct UserProfile :  Equatable , Sendable {
+    var userName : String
+    var favouritePokemons : [PokemonRaw]
+    
+}
 // MARK: - 1. Model Resource chuẩn của PokeAPI ({ "name": "...", "url": "..." })
 nonisolated struct NamedAPIResource: Sendable, Codable, Hashable {
     let name: String
@@ -15,6 +20,21 @@ nonisolated struct NamedAPIResource: Sendable, Codable, Hashable {
 
 /// Alias cho Pokemon cơ bản trong danh sách
 typealias PokemonRaw = NamedAPIResource
+
+extension NamedAPIResource {
+    var id: Int? {
+        let components = url.trimmingCharacters(in: CharacterSet(charactersIn: "/")).split(separator: "/")
+        if let last = components.last, let idVal = Int(last) {
+            return idVal
+        }
+        return nil
+    }
+    
+    var imageUrl: URL? {
+        guard let id = id else { return nil }
+        return URL(string: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/\(id).png")
+    }
+}
 
 // MARK: - 2. Danh sách phân trang (GET /pokemon?limit=&offset=)
 nonisolated struct PokemonList: Sendable, Codable {

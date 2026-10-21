@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 @main
 struct Pokemon_appApp: App {
+    @State private var profileStore = UserProfileStore()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView(
+                store: Store(initialState: HomeReducer.State()) {
+                    HomeReducer()
+                }
+            )
+            .environment(profileStore)
         }
     }
 }
