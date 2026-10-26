@@ -49,6 +49,12 @@ extension ApiClient: DependencyKey {
             try await ApiService.request(TypeDetail.self, from: .typeDetail(name: name))
         }
     )
+    
+    static var previewValue: Self {
+        .liveValue
+    }
+    
+    static let testValue = Self()
 }
 
 // MARK: - Dependency Values (TCA)
@@ -57,9 +63,4 @@ extension DependencyValues {
         get { self[ApiClient.self] }
         set { self[ApiClient.self] = newValue }
     }
-}
-
-extension ApiClient: TestDependencyKey {
-    static let previewValue = Self()
-    static let testValue = Self()
 }
