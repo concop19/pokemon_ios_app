@@ -178,11 +178,146 @@ nonisolated struct ChainLink: Sendable, Codable {
     }
 }
 
-nonisolated struct EvolutionDetail: Sendable, Codable {
+nonisolated struct EvolutionDetail: Sendable, Codable, Equatable {
     let minLevel: Int?
+    let item: NamedAPIResource?
+    let trigger: NamedAPIResource?
     
     enum CodingKeys: String, CodingKey {
         case minLevel = "min_level"
+        case item, trigger
+    }
+    
+    /// Diễn giải điều kiện tiến hoá thành chuỗi thân thiện cho UI (VD: "Lv. 36", "Water Stone", "Trade"...)
+    var conditionText: String {
+        if let minLevel = minLevel {
+            return "Lv. \(minLevel)"
+        }
+        if let item = item {
+            return item.name.replacingOccurrences(of: "-", with: " ").capitalized
+        }
+        if let trigger = trigger, trigger.name != "level-up" {
+            return trigger.name.replacingOccurrences(of: "-", with: " ").capitalized
+        }
+        return "Tiến hoá"
+    }
+}
+
+// MARK: - Bước chuyển đổi tiến hoá phục vụ UI (From -> To kèm điều kiện & ảnh)
+nonisolated struct EvolutionTransition: Sendable, Identifiable, Equatable {
+    var id: String { "\(from.name)->\(to.name)" }
+    let from: NamedAPIResource
+    let to: NamedAPIResource
+    let condition: String
+}
+
+// MARK: - Helper duyệt cây tiến hoá bằng đệ quy (Recursive Evolution)
+nonisolated struct EvolutionStage: Sendable, Equatable {
+    let species: NamedAPIResource
+    let minLevel: Int?
+    
+    var name: String { species.name }
+    var id: Int? { species.id }
+    var imageUrl: URL? { species.imageUrl }
+}
+
+extension ChainLink {
+    /// 1. Duyệt đệ quy chuỗi tiến hoá tuyến tính:
+    /// Ở mỗi cấp lấy thông tin node hiện tại, tiếp tục đệ quy với con đầu tiên (`evolvesTo.first`)
+    /// cho tới khi gặp node cuối cùng không còn cấp tiến hoá nào nữa (`evolvesTo.isEmpty`).
+    func linearEvolutionChain() -> [EvolutionStage] {
+        // tra ve 1 array cac pokemon tien hoa
+        let current = EvolutionStage(
+            species: species,
+            minLevel: evolutionDetails.first?.minLevel
+        )
+        guard let nextLink = evolvesTo.first else {
+            // Điều kiện dừng đệ quy: khi gặp thằng cuối cùng không còn evolvesTo
+            return [current]
+        }
+        return [current] + nextLink.linearEvolutionChain()
+    }
+    
+    /// 2. Đệ quy tìm kiếm: dừng lại ngay khi gặp được Pokemon đầu tiên khớp với tên
+    func findFirst(name: String) -> ChainLink? {
+        if species.name.caseInsensitiveCompare(name) == .orderedSame {
+            return self
+        }
+        for child in evolvesTo {
+            if let found = child.findFirst(name: name) {
+                return found
+            }
+        }
+        return nil
+    }
+    
+    /// 3. Đệ quy tìm đường dẫn tiến hoá từ gốc cho tới khi gặp được Pokemon chỉ định
+    func pathTo(name: String) -> [EvolutionStage]? {
+        let current = EvolutionStage(
+            species: species,
+            minLevel: evolutionDetails.first?.minLevel
+        )
+        if species.name.caseInsensitiveCompare(name) == .orderedSame {
+            return [current]
+        }
+        for child in evolvesTo {
+            if let subPath = child.pathTo(name: name) {
+                return [current] + subPath
+            }
+        }
+        return nil
+    }
+    
+    /// 4. Đệ quy lấy toàn bộ các Pokemon trong cây (hỗ trợ cả các nhánh phân nhánh như Eevee)
+    func allEvolutionSpecies() -> [NamedAPIResource] {
+        // 🛑 Điều kiện dừng đệ quy: Khi là node lá (không còn cấp tiến hoá nào nữa)
+        guard !evolvesTo.isEmpty else {
+            return [species]
+        }
+        return [species] + evolvesTo.flatMap { $0.allEvolutionSpecies() }
+    }
+    
+    /// 5. Đệ quy sinh danh sách các cặp tiến hoá (From -> To kèm điều kiện) để vẽ UI
+    /// Xử lý mượt mà cả chuỗi thẳng (Bulbasaur) và chuỗi phân nhánh (Eevee)
+    func allTransitions() -> [EvolutionTransition] {
+        guard !evolvesTo.isEmpty else { return [] }
+        var result: [EvolutionTransition] = []
+        for child in evolvesTo {
+            let condition = child.evolutionDetails.first?.conditionText ?? "Tiến hoá"
+            result.append(EvolutionTransition(from: species, to: child.species, condition: condition))
+            result.append(contentsOf: child.allTransitions())
+        }
+        return result
+    }
+}
+
+extension EvolutionChain {
+    /// Kiểm tra xem Pokemon có tiến hoá hay không (nếu evolvesTo rỗng như Ditto -> false)
+    var hasEvolution: Bool {
+        !chain.evolvesTo.isEmpty
+    }
+    
+    /// Danh sách các cặp tiến hoá phục vụ vẽ UI (From -> To kèm điều kiện)
+    var transitions: [EvolutionTransition] {
+        chain.allTransitions()
+    }
+    
+    /// Danh sách các cấp tiến hoá tuyến tính (duyệt bằng đệ quy)
+    var linearChain: [EvolutionStage] {
+        chain.linearEvolutionChain()
+    }
+    
+    /// Chuỗi hiển thị trực quan: "bulbasaur -> ivysaur (Lv.16) -> venusaur (Lv.32)"
+    var displayChain: String {
+        linearChain.enumerated().map { index, stage in
+            if index == 0 {
+                return stage.name
+            } else if let level = stage.minLevel {
+                return "\(stage.name) (Lv.\(level))"
+            } else {
+                return stage.name
+            }
+        }.joined(separator: " -> ")
     }
 }
 
