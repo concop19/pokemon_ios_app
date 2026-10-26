@@ -61,6 +61,7 @@ struct ApiClientTests {
         #expect(species.color?.name == "yellow", "Màu sắc của Pikachu phải là yellow")
         #expect(species.captureRate > 0, "Tỷ lệ bắt phải lớn hơn 0")
         #expect(!species.evolutionChain.url.isEmpty, "URL cây tiến hoá không được để trống")
+        #expect(species.evolutionChain.id != nil, "Phải trích xuất được chainId từ URL")
         #expect(!species.flavorTextEntries.isEmpty, "Phải có danh sách mô tả loài")
         #expect(!species.genera.isEmpty, "Phải có phân loại genus")
         #expect(!species.eggGroups.isEmpty, "Phải có danh sách nhóm trứng")

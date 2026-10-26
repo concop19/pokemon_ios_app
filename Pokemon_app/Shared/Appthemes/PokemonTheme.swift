@@ -42,4 +42,15 @@ enum PokemonTheme {
             return neutralCard
         }
     }
+    
+    // 3. Màu cho thanh chỉ số Stats theo ngưỡng (Đỏ khi thấp, Cam khi trung bình, Xanh khi cao)
+    static func statBarColor(for value: Int) -> Color {
+        if value < 50 {
+            return Color(red: 0.95, green: 0.35, blue: 0.35) // Đỏ (< 50)
+        } else if value < 90 {
+            return Color(red: 0.98, green: 0.72, blue: 0.28) // Cam / Vàng (50...89)
+        } else {
+            return Color(red: 0.30, green: 0.78, blue: 0.45) // Xanh lá (>= 90)
+        }
+    }
 }

@@ -13,7 +13,7 @@ struct UserProfile :  Equatable , Sendable {
     
 }
 // MARK: - 1. Model Resource chuẩn của PokeAPI ({ "name": "...", "url": "..." })
-nonisolated struct NamedAPIResource: Sendable, Codable, Hashable {
+nonisolated struct NamedAPIResource: Sendable, Codable, Hashable ,Equatable{
     let name: String
     let url: String
 }
@@ -48,7 +48,7 @@ nonisolated struct PokemonList: Sendable, Codable {
 }
 
 // MARK: - 3. Chi tiết Pokemon (GET /pokemon/{id|name})
-nonisolated struct SpecificPokemon: Sendable, Codable {
+nonisolated struct SpecificPokemon: Sendable, Codable, Equatable {
     let id: Int
     let name: String
     let height: Double
@@ -60,12 +60,12 @@ nonisolated struct SpecificPokemon: Sendable, Codable {
     let sprites: PokemonSprites
 }
 
-nonisolated struct PokemonTypeEntry: Sendable, Codable {
+nonisolated struct PokemonTypeEntry: Sendable, Codable, Equatable {
     let slot: Int
     let type: NamedAPIResource
 }
 
-nonisolated struct PokemonAbilityEntry: Sendable, Codable {
+nonisolated struct PokemonAbilityEntry: Sendable, Codable, Equatable {
     let isHidden: Bool?
     let slot: Int?
     let ability: NamedAPIResource
@@ -76,7 +76,7 @@ nonisolated struct PokemonAbilityEntry: Sendable, Codable {
     }
 }
 
-nonisolated struct PokemonStatEntry: Sendable, Codable {
+nonisolated struct PokemonStatEntry: Sendable, Codable, Equatable {
     let baseStat: Int
     let effort: Int?
     let stat: NamedAPIResource
@@ -87,11 +87,11 @@ nonisolated struct PokemonStatEntry: Sendable, Codable {
     }
 }
 
-nonisolated struct PokemonMoveEntry: Sendable, Codable {
+nonisolated struct PokemonMoveEntry: Sendable, Codable, Equatable {
     let move: NamedAPIResource
 }
 
-nonisolated struct PokemonSprites: Sendable, Codable {
+nonisolated struct PokemonSprites: Sendable, Codable, Equatable {
     let frontDefault: String?
     let frontShiny: String?
     let other: OtherSprites?
@@ -102,7 +102,7 @@ nonisolated struct PokemonSprites: Sendable, Codable {
         case other
     }
     
-    nonisolated struct OtherSprites: Sendable, Codable {
+    nonisolated struct OtherSprites: Sendable, Codable, Equatable {
         let officialArtwork: OfficialArtwork?
         
         enum CodingKeys: String, CodingKey {
@@ -110,7 +110,7 @@ nonisolated struct PokemonSprites: Sendable, Codable {
         }
     }
     
-    nonisolated struct OfficialArtwork: Sendable, Codable {
+    nonisolated struct OfficialArtwork: Sendable, Codable, Equatable {
         let frontDefault: String?
         
         enum CodingKeys: String, CodingKey {
@@ -120,7 +120,7 @@ nonisolated struct PokemonSprites: Sendable, Codable {
 }
 
 // MARK: - 4. Thông tin loài (GET /pokemon-species/{id|name})
-nonisolated struct SpeciesPokemon: Sendable, Codable {
+nonisolated struct SpeciesPokemon: Sendable, Codable, Equatable {
     let name: String
     let color: NamedAPIResource?
     let flavorTextEntries: [FlavorTextEntry]
@@ -141,7 +141,7 @@ nonisolated struct SpeciesPokemon: Sendable, Codable {
     }
 }
 
-nonisolated struct FlavorTextEntry: Sendable, Codable {
+nonisolated struct FlavorTextEntry: Sendable, Codable, Equatable {
     let flavorText: String
     let language: NamedAPIResource
     
@@ -151,22 +151,31 @@ nonisolated struct FlavorTextEntry: Sendable, Codable {
     }
 }
 
-nonisolated struct GenusEntry: Sendable, Codable {
+nonisolated struct GenusEntry: Sendable, Codable, Equatable {
     let genus: String
     let language: NamedAPIResource
 }
 
-nonisolated struct EvolutionChainUrl: Sendable, Codable {
+nonisolated struct EvolutionChainUrl: Sendable, Codable, Equatable {
     let url: String
+    
+    /// Trích xuất chainId từ URL (VD: "https://pokeapi.co/api/v2/evolution-chain/10/" -> 10)
+    var id: Int? {
+        let components = url.trimmingCharacters(in: CharacterSet(charactersIn: "/")).split(separator: "/")
+        if let last = components.last, let idVal = Int(last) {
+            return idVal
+        }
+        return nil
+    }
 }
 
 // MARK: - 5. Cây tiến hoá (GET /evolution-chain/{id})
-nonisolated struct EvolutionChain: Sendable, Codable {
+nonisolated struct EvolutionChain: Sendable, Codable, Equatable {
     let id: Int
     let chain: ChainLink
 }
 
-nonisolated struct ChainLink: Sendable, Codable {
+nonisolated struct ChainLink: Sendable, Codable, Equatable {
     let species: NamedAPIResource
     let evolutionDetails: [EvolutionDetail]
     let evolvesTo: [ChainLink]
@@ -322,7 +331,7 @@ extension EvolutionChain {
 }
 
 // MARK: - 6. Chi tiết Move (GET /move/{name}) - Bonus
-nonisolated struct MoveDetail: Sendable, Codable {
+nonisolated struct MoveDetail: Sendable, Codable, Equatable {
     let id: Int
     let name: String
     let power: Int?
@@ -339,7 +348,7 @@ nonisolated struct MoveDetail: Sendable, Codable {
     }
 }
 
-nonisolated struct MoveEffectEntry: Sendable, Codable {
+nonisolated struct MoveEffectEntry: Sendable, Codable, Equatable {
     let effect: String
     let shortEffect: String?
     let language: NamedAPIResource
@@ -352,13 +361,51 @@ nonisolated struct MoveEffectEntry: Sendable, Codable {
 }
 
 // MARK: - 7. Lọc theo Type (GET /type/{name}) - Bonus
-nonisolated struct TypeDetail: Sendable, Codable {
+nonisolated struct TypeDetail: Sendable, Codable, Equatable {
     let id: Int
     let name: String
     let pokemon: [TypePokemonEntry]
 }
 
-nonisolated struct TypePokemonEntry: Sendable, Codable {
+nonisolated struct TypePokemonEntry: Sendable, Codable, Equatable {
     let slot: Int
     let pokemon: NamedAPIResource
+}
+
+// MARK: - Extension tiện ích cho SpecificPokemon (Tab Stats & Tab About)
+extension SpecificPokemon {
+    /// Chiều cao đổi sang mét (VD: "0.7 m")
+    var heightInMeters: String { String(format: "%.1f m", height / 10.0) }
+    
+    /// Cân nặng đổi sang kg (VD: "6.9 kg")
+    var weightInKilograms: String { String(format: "%.1f kg", weight / 10.0) }
+    
+    /// Tổng 6 chỉ số Stats
+    var totalStats: Int {
+        stats.map(\.baseStat).reduce(0, +)
+    }
+}
+
+// MARK: - Extension tiện ích cho SpeciesPokemon (Tab About)
+extension SpeciesPokemon {
+    /// Mô tả tiếng Anh đã được làm sạch ký tự xuống dòng \n và ký tự ngắt trang \f
+    var cleanFlavorText: String {
+        flavorTextEntries
+            .first(where: { $0.language.name == "en" })?
+            .flavorText
+            .replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "\u{0C}", with: " ") ?? ""
+    }
+    
+    /// Phân loại Genus tiếng Anh (VD: "Seed Pokémon")
+    var englishGenus: String {
+        genera.first(where: { $0.language.name == "en" })?.genus ?? "Pokémon"
+    }
+    
+    /// Tỉ lệ giới tính (Đực / Cái): nil là vô tính
+    var genderRatio: (male: Double, female: Double)? {
+        guard genderRate != -1 else { return nil }
+        let femalePercent = (Double(genderRate) / 8.0) * 100.0
+        return (male: 100.0 - femalePercent, female: femalePercent)
+    }
 }
