@@ -19,32 +19,44 @@ struct HomeReducer {
         
     
 enum Action {
-
-case pokedexButtonTapped
-case movesButtonTapped
-case evaluationButtonTapped
-case locationButtonTapped
-case path (StackAction< Path.State , Path.Action>)
+    case pokedexButtonTapped
+    case movesButtonTapped
+    case evaluationButtonTapped
+    case locationButtonTapped
+    case favoriteButtonTapped
+    case path(StackAction<Path.State, Path.Action>)
 }
+
     @Reducer
     enum Path {
         case pokedex(PokedexReducer)
         // case moves(MovesFeature)
         case pokeDetail(PokeDetailReducer)
+        case favorite(FavoriteReducer)
     }
-    var body: some Reducer<State, Action>{
+
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-          
             case .pokedexButtonTapped:
                 state.path.append(.pokedex(PokedexReducer.State()))
                 return .none
                 
+            case .favoriteButtonTapped:
+                state.path.append(.favorite(FavoriteReducer.State()))
+                return .none
+                
             case .movesButtonTapped, .evaluationButtonTapped, .locationButtonTapped:
                 return .none
+                
             case let .path(.element(id: _, action: .pokedex(.pokemonTapped(pokemon)))):
-                                state.path.append(.pokeDetail(PokeDetailReducer.State(pokemonRaw: pokemon)))
-                                return .none
+                state.path.append(.pokeDetail(PokeDetailReducer.State(pokemonRaw: pokemon)))
+                return .none
+                
+            case let .path(.element(id: _, action: .favorite(.pokemonTapped(poke)))):
+                let raw = PokemonRaw(name: poke.name, url: "https://pokeapi.co/api/v2/pokemon/\(poke.id)/")
+                state.path.append(.pokeDetail(PokeDetailReducer.State(pokemonRaw: raw)))
+                return .none
             
             case .path:
                 return .none

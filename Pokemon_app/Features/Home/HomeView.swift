@@ -51,10 +51,13 @@ struct HomeView: View {
             switch store.case {
             case let .pokedex(pokedexStore):
                 PokedexView(store: pokedexStore)
-            
-        case let .pokeDetail(detailStore):        // 👈 THÊM CASE NÀY
-                        PokeDetailView(store: detailStore)
-                    }
+                
+            case let .pokeDetail(detailStore):
+                PokeDetailView(store: detailStore)
+                
+            case let .favorite(favoriteStore):
+                FavoriteView(store: favoriteStore)
+            }
         }
     }
     
@@ -74,6 +77,18 @@ struct HomeView: View {
             }
             
             Spacer()
+            
+            // Nút Yêu thích (Favorites)
+            Button {
+                store.send(.favoriteButtonTapped)
+            } label: {
+                Image(systemName: "heart.fill")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.red)
+                    .frame(width: 42, height: 42)
+                    .background(Color.white.opacity(0.06))
+                    .clipShape(Circle())
+            }
             
             // Avatar người dùng có viền sáng
             Button {
