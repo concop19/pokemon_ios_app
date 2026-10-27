@@ -168,7 +168,7 @@ nonisolated struct EvolutionChainUrl: Sendable, Codable, Equatable {
         return nil
     }
 }
-
+// giải thik 
 // MARK: - 5. Cây tiến hoá (GET /evolution-chain/{id})
 nonisolated struct EvolutionChain: Sendable, Codable, Equatable {
     let id: Int

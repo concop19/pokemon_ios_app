@@ -275,7 +275,13 @@ struct PokeDetailView: View {
                 )
                 
             case .evolution:
-                EvaluationView()
+                EvaluationView(evolutionChain: store.evolutionChain,
+                               currentPokemonName: store.pokemonRaw.name,
+                               themeColor: themeColor,
+                               isLoading: store.isEvolutionLoading,
+                               onSelectPokemon: { selectedSpecies in
+                    // Gửi action mở Pokémon này lên Navigation Stack!
+                    store.send(.openEvolutionPokemon(selectedSpecies))})
                 
             case .moves:
                 MovesView()

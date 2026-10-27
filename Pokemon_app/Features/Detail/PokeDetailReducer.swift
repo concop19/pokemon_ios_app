@@ -117,6 +117,7 @@ struct PokeDetailReducer {
             // MARK: - 3. Nhận kết quả cây tiến hoá
             case let .evolutionResponse(.success(chain)):
                 state.isEvolutionLoading = false
+                
                 state.evolutionChain = chain
                 return .none
                 
