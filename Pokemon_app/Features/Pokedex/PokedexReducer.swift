@@ -38,10 +38,11 @@ struct PokedexReducer {
         // MARK: - 4. Quản lý lỗi
         var initialError: String? = nil              // Lỗi trang đầu
         var loadMoreError: String? = nil             // Lỗi khi cuộn tải thêm
-        
+       
         // MARK: - 5. Detail Selection
         var selectedPokemon: PokemonRaw? = nil       // Pokemon được chọn để mở Detail
     }
+
     
     enum Action {
         // 1. Danh sách & Phân trang
@@ -234,8 +235,8 @@ struct PokedexReducer {
                 
             // MARK: - 6. Nhấn vào Thẻ mở Detail
             case let .pokemonTapped(pokemon):
-                state.selectedPokemon = pokemon
-                return .none
+                        state.selectedPokemon = pokemon
+                        return .none
             }
         }
     }

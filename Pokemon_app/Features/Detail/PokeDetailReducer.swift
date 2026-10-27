@@ -22,7 +22,7 @@ struct PokeDetailReducer {
     // MARK: - State
     @ObservableState
     struct State: Equatable {
-        let pokemonRaw: PokemonRaw
+        var pokemonRaw: PokemonRaw
         
         // Dữ liệu API
         var pokemon: SpecificPokemon?
@@ -139,9 +139,17 @@ struct PokeDetailReducer {
                 state.errorMessage = nil
                 return .send(.onAppear)
                 
-            case .openEvolutionPokemon:
-                // Parent / NavigationStack sẽ bắt action này để push sang màn tiếp theo
-                return .none
+            case let .openEvolutionPokemon(species):
+                if state.pokemonRaw.id != species.id {
+                    state.pokemonRaw = PokemonRaw(name: species.name, url: species.url)
+                    // 2. Reset dữ liệu cũ để hiện lại loading
+                    state.pokemon = nil
+                    state.species = nil
+                    state.errorMessage = nil
+                    state.isPokemonLoading = true
+                    // 3. Kích hoạt tải dữ liệu mới
+                }
+                    return .send(.onAppear)
             }
         }
     }

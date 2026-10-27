@@ -53,7 +53,10 @@ struct HomeView: View {
             switch store.case {
             case let .pokedex(pokedexStore):
                 PokedexView(store: pokedexStore)
-            }
+            
+        case let .pokeDetail(detailStore):        // 👈 THÊM CASE NÀY
+                        PokeDetailView(store: detailStore)
+                    }
         }
     }
     

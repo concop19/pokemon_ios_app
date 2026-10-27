@@ -29,6 +29,7 @@ case path (StackAction< Path.State , Path.Action>)
     enum Path {
         case pokedex(PokedexReducer)
         // case moves(MovesFeature)
+        case pokeDetail(PokeDetailReducer)
     }
     var body: some Reducer<State, Action>{
         Reduce { state, action in
@@ -40,7 +41,10 @@ case path (StackAction< Path.State , Path.Action>)
                 
             case .movesButtonTapped, .evaluationButtonTapped, .locationButtonTapped:
                 return .none
-                
+            case let .path(.element(id: _, action: .pokedex(.pokemonTapped(pokemon)))):
+                                state.path.append(.pokeDetail(PokeDetailReducer.State(pokemonRaw: pokemon)))
+                                return .none
+            
             case .path:
                 return .none
             }

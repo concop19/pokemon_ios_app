@@ -281,7 +281,8 @@ struct PokeDetailView: View {
                                isLoading: store.isEvolutionLoading,
                                onSelectPokemon: { selectedSpecies in
                     // Gửi action mở Pokémon này lên Navigation Stack!
-                    store.send(.openEvolutionPokemon(selectedSpecies))})
+                    store.send(.openEvolutionPokemon(selectedSpecies))
+                })
                 
             case .moves:
                 MovesView()
