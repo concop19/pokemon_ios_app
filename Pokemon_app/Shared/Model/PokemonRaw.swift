@@ -410,7 +410,7 @@ extension SpeciesPokemon {
         return (male: 100.0 - femalePercent, female: femalePercent)
     }
 }
-nonisolated struct favoritePoke : Equatable, Codable, Sendable {
+nonisolated struct favoritePoke : Equatable, Codable, Sendable, Identifiable {
     let id : String
     let name : String
     let color : String

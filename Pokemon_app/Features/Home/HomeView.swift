@@ -10,12 +10,10 @@ import ComposableArchitecture
 
 struct HomeView: View {
     @Bindable var store: StoreOf<HomeReducer>
-    @Environment(UserProfileStore.self) private var userProfileStore: UserProfileStore?
-    
     @State private var selectedTab: Int = 1 // 0: Notifications, 1: Home, 2: User
     
     private var currentUserName: String {
-        userProfileStore?.currentProfile?.userName ?? "le viet manh"
+        store.userName
     }
     
     var body: some View {
@@ -276,5 +274,4 @@ struct ScaleButtonStyle: ButtonStyle {
             HomeReducer()
         }
     )
-    .environment(UserProfileStore())
 }

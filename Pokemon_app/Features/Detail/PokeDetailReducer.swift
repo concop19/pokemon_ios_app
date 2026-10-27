@@ -59,6 +59,7 @@ struct PokeDetailReducer {
         
         case tabSelected(Tab)
         case toggleFavorite
+        case isFavoriteLoaded(Bool)
         case retryButtonTapped
         
         // Delegate action cho điều hướng tới Pokemon khác (trong cây tiến hoá)
@@ -66,20 +67,31 @@ struct PokeDetailReducer {
     }
     
     @Dependency(\.apiClient) var apiClient
+    @Dependency(\.favoriteClient) var favoriteClient
     
     // MARK: - Reducer Body
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
                 
-            // MARK: - 1. Mở màn hình: Bắn song song Detail & Species
+            // MARK: - 1. Mở màn hình: Bắn song song Detail & Species và kiểm tra Favorite
             case .onAppear:
-                guard state.pokemon == nil else { return .none }
+                let targetId = state.idOrName
+                
+                // Hiệu ứng kiểm tra xem Pokemon này đã lưu trong JSON chưa
+                let checkFavoriteEffect: Effect<Action> = .run { send in
+                    let isFav = await favoriteClient.isFavorite(targetId)
+                    await send(.isFavoriteLoaded(isFav))
+                }
+                
+                guard state.pokemon == nil else {
+                    return checkFavoriteEffect
+                }
+                
                 state.isPokemonLoading = true
                 state.errorMessage = nil
                 
-                let targetId = state.idOrName
-                return .run { send in
+                let fetchEffect: Effect<Action> = .run { send in
                     do {
                         async let fetchDetail = apiClient.pokemon(targetId)
                         async let fetchSpecies = apiClient.pokemonSpecies(targetId)
@@ -90,6 +102,12 @@ struct PokeDetailReducer {
                         await send(.initialDataResponse(.failure(error)))
                     }
                 }
+                
+                return .merge(checkFavoriteEffect, fetchEffect)
+                
+            case let .isFavoriteLoaded(isFav):
+                state.isFavorite = isFav
+                return .none
                 
             // MARK: - 2. Nhận kết quả Detail + Species -> Gọi tiếp Evolution Chain
             case let .initialDataResponse(.success((detail, species))):
@@ -132,8 +150,25 @@ struct PokeDetailReducer {
                 
             case .toggleFavorite:
                 state.isFavorite.toggle()
+                let isFav = state.isFavorite
+                let poke = favoritePoke(
+                    id: state.idOrName,
+                    name: state.pokemonRaw.name,
+                    color: state.themeColorName ?? "normal",
+                    imageUrl: state.pokemonRaw.imageUrl?.absoluteString ?? ""
+                )
                 
-                return .none
+                return .run { _ in
+                    do {
+                        if isFav {
+                            try await favoriteClient.addFavorite(poke)
+                        } else {
+                            try await favoriteClient.deleteFavorite(poke.id)
+                        }
+                    } catch {
+                        print("❌ [PokeDetailReducer] Lỗi toggle favorite: \(error.localizedDescription)")
+                    }
+                }
                 
             case .retryButtonTapped:
                 state.isPokemonLoading = true
@@ -148,6 +183,7 @@ struct PokeDetailReducer {
                     state.species = nil
                     state.errorMessage = nil
                     state.isPokemonLoading = true
+                    state.isFavorite = false
                     // 3. Kích hoạt tải dữ liệu mới
                 }
                     return .send(.onAppear)

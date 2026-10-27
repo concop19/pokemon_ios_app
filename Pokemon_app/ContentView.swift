@@ -9,15 +9,12 @@ import SwiftUI
 import ComposableArchitecture
 
 struct ContentView: View {
-    @State private var profileStore = UserProfileStore()
-    
     var body: some View {
         HomeView(
             store: Store(initialState: HomeReducer.State()) {
                 HomeReducer()
             }
         )
-        .environment(profileStore)
     }
 }
 

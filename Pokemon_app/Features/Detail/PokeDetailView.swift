@@ -12,13 +12,6 @@ struct PokeDetailView: View {
     @Bindable var store: StoreOf<PokeDetailReducer>
     @Environment(\.dismiss) private var dismiss
     @Namespace private var tabAnimation
-    @Environment(UserProfileStore.self) private var profileStore: UserProfileStore?
-    
-    // Kiểm tra xem Pokemon hiện tại đã được yêu thích chưa
-    private var isFavorite: Bool {
-        profileStore?.isFavorite(id: store.idOrName) ?? false
-    }
-    
     // Màu chủ đạo theo loài hoặc mặc định
     private var themeColor: Color {
         PokemonTheme.cardColor(from: store.themeColorName)
@@ -84,25 +77,16 @@ struct PokeDetailView: View {
             Spacer()
             
             Button {
-                let id = store.idOrName
-                let name = store.pokemonRaw.name
-                let color = store.themeColorName ?? "normal"
-                let imageUrl = store.pokemonRaw.imageUrl?.absoluteString ?? ""
-                profileStore?.toggleFavourite(
-                    id: id,
-                    name: name,
-                    color: color,
-                    imageUrl: imageUrl
-                )
+                store.send(.toggleFavorite)
             } label: {
-                Image(systemName: isFavorite ? "heart.fill" : "heart")
+                Image(systemName: store.isFavorite ? "heart.fill" : "heart")
                     .font(.system(size: 19, weight: .bold))
-                    .foregroundStyle(isFavorite ? Color.red : Color.white)
+                    .foregroundStyle(store.isFavorite ? Color.red : Color.white)
                     .frame(width: 42, height: 42)
                     .background(Color.white.opacity(0.2))
                     .clipShape(Circle())
-                    .scaleEffect(isFavorite ? 1.15 : 1.0)
-                    .animation(.spring(response: 0.25, dampingFraction: 0.5), value: isFavorite)
+                    .scaleEffect(store.isFavorite ? 1.15 : 1.0)
+                    .animation(.spring(response: 0.25, dampingFraction: 0.5), value: store.isFavorite)
             }
         }
     }
@@ -392,7 +376,6 @@ struct PokeDetailView: View {
             PokeDetailReducer()
         }
     )
-    .environment(UserProfileStore())
 }
 
 #Preview("Loading State") {
@@ -409,6 +392,5 @@ struct PokeDetailView: View {
             PokeDetailReducer()
         }
     )
-    .environment(UserProfileStore())
 }
 

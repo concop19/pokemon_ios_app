@@ -11,7 +11,6 @@ import ComposableArchitecture
 struct PokedexView: View {
     @Bindable var store: StoreOf<PokedexReducer>
     @Environment(\.dismiss) private var dismiss
-    @Environment(UserProfileStore.self) private var userProfileStore: UserProfileStore?
     
     // Cấu hình lưới 2 cột: Trên màn hình điện thoại hiển thị vừa vặn ~4 thẻ (2x2)
     private let columns = [
@@ -284,6 +283,5 @@ struct PokedexView: View {
             }
         )
     }
-    .environment(UserProfileStore())
 }
 

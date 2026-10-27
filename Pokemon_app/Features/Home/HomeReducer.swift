@@ -10,10 +10,11 @@ import ComposableArchitecture
 import Foundation
 @Reducer
 struct HomeReducer {
-@ObservableState
-    struct State : Equatable {
-       
-        var path = StackState<Path.State>()}
+    @ObservableState
+    struct State: Equatable {
+        var userName: String = "le viet manh"
+        var path = StackState<Path.State>()
+    }
     
         
     
