@@ -28,7 +28,7 @@ struct PokeDetailReducer {
         var pokemon: SpecificPokemon?
         var species: SpeciesPokemon?
         var evolutionChain: EvolutionChain?
-        
+        var favoritePokeModel : favoritePoke?
         // Trạng thái tải
         var isPokemonLoading: Bool = true
         var isEvolutionLoading: Bool = false
@@ -132,6 +132,7 @@ struct PokeDetailReducer {
                 
             case .toggleFavorite:
                 state.isFavorite.toggle()
+                
                 return .none
                 
             case .retryButtonTapped:

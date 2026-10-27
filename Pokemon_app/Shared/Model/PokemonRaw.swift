@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct UserProfile :  Equatable , Sendable {
     var userName : String
-    var favouritePokemons : [PokemonRaw]
+    var favouritePokemons : [favoritePoke]
     
 }
 // MARK: - 1. Model Resource chuẩn của PokeAPI ({ "name": "...", "url": "..." })
@@ -407,5 +408,17 @@ extension SpeciesPokemon {
         guard genderRate != -1 else { return nil }
         let femalePercent = (Double(genderRate) / 8.0) * 100.0
         return (male: 100.0 - femalePercent, female: femalePercent)
+    }
+}
+nonisolated struct favoritePoke : Equatable, Codable, Sendable {
+    let id : String
+    let name : String
+    let color : String
+    let imageUrl : String
+    init(id: String, name: String, color: String, imageUrl: String) {
+        self.id = id
+        self.name = name
+        self.color = color
+        self.imageUrl = imageUrl
     }
 }
